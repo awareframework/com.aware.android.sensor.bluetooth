@@ -460,7 +460,7 @@ class BluetoothSensor : AwareSensor() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     data class BluetoothConfig(
-            var sensorObserver: BluetoothObserver? = null,
+            var sensorObserver: SensorObserver? = null,
             var frequency: Float = 1f
     ) : SensorConfig(dbPath = "aware_bluetooth") {
 
@@ -474,7 +474,7 @@ class BluetoothSensor : AwareSensor() {
         }
     }
 
-    interface BluetoothObserver {
+    interface SensorObserver {
         fun onBluetoothDetected(data: BluetoothData)
         fun onBluetoothBLEDetected(data: BluetoothData)
         fun onScanStarted()
