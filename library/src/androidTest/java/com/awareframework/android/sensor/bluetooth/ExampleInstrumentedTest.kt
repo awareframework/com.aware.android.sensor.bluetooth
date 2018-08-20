@@ -19,8 +19,8 @@ class ExampleInstrumentedTest {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getTargetContext()
 
-        BluetoothSensor.startService(appContext, BluetoothSensor.BluetoothConfig().apply {
-            sensorObserver = object : BluetoothSensor.SensorObserver {
+        BluetoothSensor.start(appContext, BluetoothSensor.Config().apply {
+            sensorObserver = object : BluetoothSensor.Observer {
                 override fun onBluetoothDetected(data: BluetoothData) {
                     // your code here...
                 }

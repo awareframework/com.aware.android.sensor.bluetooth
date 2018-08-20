@@ -8,24 +8,25 @@ The Bluetooth sensor logs the mobile device’s Bluetooth sensor and detects sur
 
 ### BluetoothSensor
 
-+ `startService(context: Context, config: BluetoothConfig?)`: Starts the bluetooth sensor with the optional configuration.
-+ `stopService(context: Context)`: Stops the service.
++ `start(context: Context, config: BluetoothSensor.Config?)`: Starts the bluetooth sensor with the optional configuration.
++ `stop(context: Context)`: Stops the service.
 
-### BluetoothConfig
+### BluetoothSensor.Config
 
 Class to hold the configuration of the sensor.
 
 #### Fields
 
-+ `debug: Boolean`: enable/disable logging to `Logcat`. (default = false)
-+ `host: String`: Host for syncing the database. (default = null)
-+ `key: String`: Encryption key for the database. (default = no encryption)
-+ `host: String`: Host for syncing the database. (default = null)
-+ `type: EngineDatabaseType`: Which db engine to use for saving data. (default = NONE)
-+ `path: String`: Path of the database.
-+ `deviceId: String`: Id of the device that will be associated with the events and the sensor. (default = "")
-+ `sensorObserver: BluetoothSensor.SensorObserver`: Callback for live data updates.
++ `sensorObserver: BluetoothSensor.Observer`: Callback for live data updates.
 + `frequency: Float`: Frequency of the bluetooth data querying in minutes. (default = 1f)
++ `enabled: Boolean` Sensor is enabled or not. (default = false)
++ `debug: Boolean` enable/disable logging to `Logcat`. (default = false)
++ `label: String` Label for the data. (default = "")
++ `deviceId: String` Id of the device that will be associated with the events and the sensor. (default = "")
++ `dbEncryptionKey` Encryption key for the database. (default =String? = null)
++ `dbType: Engine` Which db engine to use for saving data. (default = `Engine.DatabaseType.NONE`)
++ `dbPath: String` Path of the database. (default = "aware_wifi")
++ `dbHost: String` Host for syncing the database. (Defult = `null`)
 
 ## Broadcasts
 
@@ -53,36 +54,38 @@ If device supports low power bluetooth technology then the broadcasts are as fol
 
 Contains the mobile device’s Bluetooth sensor information.
 
-| Field     | Type   | Description                                       |
-| --------- | ------ | ------------------------------------------------- |
-| address   | String | the device’s Bluetooth sensor MAC address        |
-| name      | String | the device’s Bluetooth sensor user assigned name |
-| deviceId  | String | AWARE device UUID                                 |
-| timestamp | Long   | unixtime milliseconds since 1970                  |
-| timezone  | Int    | [Raw timezone offset][1] of the device            |
-| os        | String | Operating system of the device (ex. android)      |
+| Field     | Type   | Description                                                     |
+| --------- | ------ | --------------------------------------------------------------- |
+| address   | String | the device’s Bluetooth sensor MAC address                      |
+| name      | String | the device’s Bluetooth sensor user assigned name               |
+| deviceId  | String | AWARE device UUID                                               |
+| label     | String | Customizable label. Useful for data calibration or traceability |
+| timestamp | Long   | unixtime milliseconds since 1970                                |
+| timezone  | Int    | [Raw timezone offset][1] of the device                          |
+| os        | String | Operating system of the device (ex. android)                    |
 
 ### Bluetooth Data
 
 Contains the scan results data.
 
-| Field     | Type   | Description                                       |
-| --------- | ------ | ------------------------------------------------- |
-| address   | String | the device’s Bluetooth sensor MAC address        |
-| name      | String | the device’s Bluetooth sensor user assigned name |
-| rssi      | Int    | the RSSI dB to the scanned device                 |
-| scanLabel | String | unixtime miliseconds of the initial scan request  |
-| deviceId  | String | AWARE device UUID                                 |
-| timestamp | Long   | unixtime milliseconds since 1970                  |
-| timezone  | Int    | [Raw timezone offset][1] of the device            |
-| os        | String | Operating system of the device (ex. android)      |
+| Field     | Type   | Description                                                     |
+| --------- | ------ | --------------------------------------------------------------- |
+| address   | String | the device’s Bluetooth sensor MAC address                      |
+| name      | String | the device’s Bluetooth sensor user assigned name               |
+| rssi      | Int    | the RSSI dB to the scanned device                               |
+| scanLabel | String | unixtime miliseconds of the initial scan request                |
+| deviceId  | String | AWARE device UUID                                               |
+| label     | String | Customizable label. Useful for data calibration or traceability |
+| timestamp | Long   | unixtime milliseconds since 1970                                |
+| timezone  | Int    | [Raw timezone offset][1] of the device                          |
+| os        | String | Operating system of the device (ex. android)                    |
 
 ## Example usage
 
 ```kotlin
 // To start the service.
-BluetoothSensor.startService(appContext, BluetoothSensor.BluetoothConfig().apply {
-    sensorObserver = object : BluetoothSensor.SensorObserver {
+BluetoothSensor.start(appContext, BluetoothSensor.Config().apply {
+    sensorObserver = object : BluetoothSensor.Observer {
         override fun onBluetoothDetected(data: BluetoothData) {
             // your code here...
         }
@@ -117,7 +120,7 @@ BluetoothSensor.startService(appContext, BluetoothSensor.BluetoothConfig().apply
 })
 
 // To stop the service
-BluetoothSensor.stopService(appContext)
+BluetoothSensor.stop(appContext)
 ```
 
 ## License

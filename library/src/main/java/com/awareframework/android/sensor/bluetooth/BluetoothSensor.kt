@@ -43,7 +43,7 @@ import com.awareframework.android.sensor.bluetooth.model.BluetoothData
 class BluetoothSensor : AwareSensor() {
 
     companion object {
-        const val TAG = "AWAREBluetoothSensor"
+        const val TAG = "AWARE::Bluetooth"
 
         /**
          * Broadcasted event: new bluetooth device detected
@@ -82,7 +82,7 @@ class BluetoothSensor : AwareSensor() {
 
         const val ACTION_AWARE_BLUETOOTH_SYNC = "com.awareframework.android.sensor.bluetooth.SENSOR_SYNC"
 
-        val CONFIG = BluetoothConfig()
+        val CONFIG = Config()
 
         val REQUIRED_PERMISSIONS = arrayOf(
                 Manifest.permission.BLUETOOTH,
@@ -90,13 +90,13 @@ class BluetoothSensor : AwareSensor() {
                 Manifest.permission.ACCESS_COARSE_LOCATION
         )
 
-        fun startService(context: Context, config: BluetoothConfig? = null) {
+        fun start(context: Context, config: Config? = null) {
             if (config != null)
                 CONFIG.replaceWith(config)
             context.startService(Intent(context, BluetoothSensor::class.java))
         }
 
-        fun stopService(context: Context) {
+        fun stop(context: Context) {
             context.stopService(Intent(context, BluetoothSensor::class.java))
         }
     }
@@ -459,22 +459,22 @@ class BluetoothSensor : AwareSensor() {
 
     override fun onBind(intent: Intent?): IBinder? = null
 
-    data class BluetoothConfig(
-            var sensorObserver: SensorObserver? = null,
+    data class Config(
+            var sensorObserver: Observer? = null,
             var frequency: Float = 1f
     ) : SensorConfig(dbPath = "aware_bluetooth") {
 
         override fun <T : SensorConfig> replaceWith(config: T) {
             super.replaceWith(config)
 
-            if (config is BluetoothConfig) {
+            if (config is Config) {
                 sensorObserver = config.sensorObserver
                 frequency = config.frequency
             }
         }
     }
 
-    interface SensorObserver {
+    interface Observer {
         fun onBluetoothDetected(data: BluetoothData)
         fun onBluetoothBLEDetected(data: BluetoothData)
         fun onScanStarted()
@@ -496,18 +496,18 @@ class BluetoothSensor : AwareSensor() {
                     logd("Sensor enabled: " + CONFIG.enabled)
 
                     if (CONFIG.enabled) {
-                        startService(context)
+                        start(context)
                     }
                 }
 
                 ACTION_AWARE_BLUETOOTH_STOP,
                 SENSOR_STOP_ALL -> {
                     logd("Stopping sensor.")
-                    stopService(context)
+                    stop(context)
                 }
 
                 ACTION_AWARE_BLUETOOTH_START -> {
-                    startService(context)
+                    start(context)
                 }
             }
         }
